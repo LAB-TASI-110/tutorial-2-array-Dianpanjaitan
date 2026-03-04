@@ -7,10 +7,12 @@ int main() {
     int min_val = INT_MAX; // Inisialisasi min_val dengan nilai integer terbesar
     int max_val = INT_MIN; // Inisialisasi max_val dengan nilai integer terkecil
 
+
     // Menerima input n sebagai jumlah baris angka
     // Tidak ada validasi input untuk n sesuai permintaan
     scanf("%d", &n);
 
+    
     // Loop untuk menerima n buah bilangan bulat
     for (int i = 0; i < n; i++) {
         scanf("%d", &num); // Menerima bilangan bulat
