@@ -1,140 +1,68 @@
-#include <stdio.h>  // Untuk fungsi input/output seperti scanf dan printf
-#include <stdlib.h> // Untuk alokasi memori dinamis (malloc dan free)
+#include <stdio.h>    // Untuk fungsi input/output seperti printf dan scanf
+#include <limits.h>   // Untuk INT_MAX dan INT_MIN (nilai integer maksimum dan minimum)
+#include <stdlib.h>   // Untuk fungsi malloc dan free
 
-// Fungsi untuk membaca jumlah bilangan (n) yang akan dimasukkan
-int read_n_count() {
-    int n;
-    scanf("%d", &n); // Membaca nilai n dari input
-    return n;
-}
+// Fungsi untuk menerima N bilangan bulat dan menemukan nilai min/max
+// Mengembalikan pointer ke array yang berisi min dan max
+// Ukuran array yang dikembalikan adalah 2: result[0] = min, result[1] = max
+int* getInputNumbers() {
+    int n; // Variabel untuk menyimpan jumlah baris angka
+    int num; // Variabel untuk menyimpan setiap bilangan yang diinput
+    int min_val = INT_MAX; // Inisialisasi min_val dengan nilai integer terbesar
+    int max_val = INT_MIN; // Inisialisasi max_val dengan nilai integer terkecil
 
-// Fungsi untuk membaca n bilangan bulat dan menyimpannya ke dalam array
-void read_numbers_into_array(int* arr, int n) {
-    for (int i = 0; i < n; ++i) {
-        scanf("%d", &arr[i]); // Membaca setiap bilangan dan menyimpannya ke array
-    }
-}
+    // Menerima input n sebagai jumlah baris angka
+    scanf("%d", &n);
 
-// Fungsi untuk menemukan nilai minimum dalam sebuah array bilangan bulat
-int find_min_value(const int* arr, int n) {
-    // Menangani kasus jika array kosong, meskipun soal menyiratkan n > 0
-    if (n <= 0) {
-        return 0; // Nilai default atau penanganan error jika tidak ada elemen
-    }
-    int min_val = arr[0]; // Inisialisasi min_val dengan elemen pertama
-    for (int i = 1; i < n; ++i) {
-        if (arr[i] < min_val) {
-            min_val = arr[i]; // Update min_val jika ditemukan nilai yang lebih kecil
+    // Loop untuk menerima n buah bilangan bulat
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &num); // Menerima bilangan bulat
+        
+        // Membandingkan dengan nilai terkecil yang sudah ada
+        if (num < min_val) {
+            min_val = num;
+        }
+        
+        // Membandingkan dengan nilai terbesar yang sudah ada
+        if (num > max_val) {
+            max_val = num;
         }
     }
-    return min_val;
+
+    // Alokasikan memori untuk menyimpan min_val dan max_val
+    int* result = (int*) malloc(sizeof(int) * 2);
+    if (result == NULL) {
+        // Handle error jika alokasi memori gagal
+        fprintf(stderr, "Gagal mengalokasikan memori!\n");
+        exit(EXIT_FAILURE);
+    }
+    result[0] = min_val;
+    result[1] = max_val;
+    
+    return result; // Mengembalikan pointer ke array hasil
 }
 
-// Fungsi untuk menemukan nilai maksimum dalam sebuah array bilangan bulat
-int find_max_value(const int* arr, int n) {
-    // Menangani kasus jika array kosong, meskipun soal menyiratkan n > 0
-    if (n <= 0) {
-        return 0; // Nilai default atau penanganan error jika tidak ada elemen
-    }
-    int max_val = arr[0]; // Inisialisasi max_val dengan elemen pertama
-    for (int i = 1; i < n; ++i) {
-        if (arr[i] > max_val) {
-            max_val = arr[i]; // Update max_val jika ditemukan nilai yang lebih besar
-        }
-    }
-    return max_val;
+// Fungsi untuk menampilkan nilai terkecil dan terbesar
+void displayMinMax(int min_val, int max_val) {
+    // Menampilkan nilai terkecil pada baris pertama
+    printf("%d\n", min_val);
+    
+    // Menampilkan nilai terbesar pada baris kedua
+    printf("%d\n", max_val);
 }
 
-// FUNGSI BARU: Fungsi untuk menemukan rata-rata terendah dari dua nilai berturut-turut
-double find_lowest_average_of_consecutive_pairs(const int* arr, int n) {
-    // Jika jumlah elemen kurang dari 2, tidak ada pasangan berturut-turut yang bisa dibentuk.
-    // Mengembalikan 0.0 sebagai nilai default.
-    if (n < 2) {
-        return 0.0;
-    }
-
-    // Inisialisasi nilai rata-rata terendah dengan rata-rata pasangan pertama
-    double min_avg = (double)(arr[0] + arr[1]) / 2.0;
-
-    // Iterasi melalui sisa pasangan
-    for (int i = 1; i < n - 1; ++i) {
-        double current_avg = (double)(arr[i] + arr[i+1]) / 2.0;
-        if (current_avg < min_avg) {
-            min_avg = current_avg; // Perbarui min_avg jika ditemukan yang lebih rendah
-        }
-    }
-    return min_avg;
-}
-
-// Fungsi utama program
 int main() {
-    // Membaca jumlah baris masukan berikutnya (n)
-    int n = read_n_count();
+    int* results; // Pointer untuk menyimpan hasil dari fungsi getInputNumbers
 
-    // Mengalokasikan memori secara dinamis untuk menyimpan n bilangan bulat
-    // Ini penting karena n tidak diketahui pada saat kompilasi
-    int* numbers = (int*)malloc(n * sizeof(int));
-    
-    // Penanganan error jika alokasi memori gagal
-    if (numbers == NULL) {
-        fprintf(stderr, "Error: Alokasi memori gagal.\n");
-        return 1; // Mengembalikan kode error
-    }
+    // Memanggil fungsi untuk mendapatkan nilai min dan max
+    results = getInputNumbers();
 
-    // Membaca n bilangan bulat ke dalam array yang dialokasikan
-    read_numbers_into_array(numbers, n);
+    // Memanggil fungsi untuk menampilkan nilai min dan max
+    displayMinMax(results[0], results[1]);
 
-    // Mencari nilai minimum dan maksimum menggunakan fungsi-fungsi yang telah dibuat
-    int min_result = find_min_value(numbers, n);
-    int max_result = find_max_value(numbers, n);
-    
-    // Memanggil fungsi baru untuk mencari rata-rata terendah dari pasangan berturut-turut
-    double lowest_consecutive_avg_result = find_lowest_average_of_consecutive_pairs(numbers, n);
+    // Penting: Bebaskan memori yang dialokasikan oleh malloc
+    free(results);
+    results = NULL; // Hindari dangling pointer
 
-    // Mencetak nilai minimum, maksimum, dan rata-rata terendah sesuai spesifikasi keluaran
-    printf("%d\n", min_result);
-    printf("%d\n", max_result);
-    printf("%.2f\n", lowest_consecutive_avg_result); // Mencetak dengan 2 digit presisi
-
-    // Membebaskan memori yang telah dialokasikan secara dinamis untuk mencegah memory leak
-    free(numbers);
-    numbers = NULL; // Praktik baik untuk menghindari dangling pointer
-
-    return 0; // Mengindikasikan program berjalan sukses
-}
-// Fungsi utama program
-int main() {
-    // Membaca jumlah baris masukan berikutnya (n)
-    int n = read_n_count();
-
-    // Mengalokasikan memori secara dinamis untuk menyimpan n bilangan bulat
-    // Ini penting karena n tidak diketahui pada saat kompilasi
-    int* numbers = (int*)malloc(n * sizeof(int));
-    
-    // Penanganan error jika alokasi memori gagal
-    if (numbers == NULL) {
-        fprintf(stderr, "Error: Alokasi memori gagal.\n");
-        return 1; // Mengembalikan kode error
-    }
-
-    // Membaca n bilangan bulat ke dalam array yang dialokasikan
-    read_numbers_into_array(numbers, n);
-
-    // Mencari nilai minimum dan maksimum menggunakan fungsi-fungsi yang telah dibuat
-    int min_result = find_min_value(numbers, n);
-    int max_result = find_max_value(numbers, n);
-    
-    // Memanggil fungsi baru untuk mencari rata-rata terendah dari pasangan berturut-turut
-    double lowest_consecutive_avg_result = find_lowest_average_of_consecutive_pairs(numbers, n);
-
-    // Mencetak nilai minimum, maksimum, dan rata-rata terendah sesuai spesifikasi keluaran
-    printf("%d\n", min_result);
-    printf("%d\n", max_result);
-    printf("%.2f\n", lowest_consecutive_avg_result); // Mencetak dengan 2 digit presisi
-
-    // Membebaskan memori yang telah dialokasikan secara dinamis untuk mencegah memory leak
-    free(numbers);
-    numbers = NULL; // Praktik baik untuk menghindari dangling pointer
-
-    return 0; // Mengindikasikan program berjalan sukses
+    return 0; // Menandakan program berakhir dengan sukses
 }
